@@ -13,20 +13,21 @@ console.log('API Key first 4 chars:', process.env.API_KEY?.substring(0, 4));
 
 let news;
 
-async function getNews(){
+async function getNews(category){
     try {
         if (!process.env.API_KEY) {
             throw new Error('API key is not configured');
         }
-        
-        const data = await fetch(`https://newsdata.io/api/1/news?apikey=${process.env.API_KEY}`);
+        let url = `https://newsdata.io/api/1/news?apikey=${process.env.API_KEY}`;
+        if (category) {
+            url += `&category=${encodeURIComponent(category.toLowerCase())}`;
+        }
+        const data = await fetch(url);
         const res = await data.json();
-        
         if (res.status === 'error') {
             console.error('API Error:', res);
             throw new Error(res.message);
         }
-        
         news = res.results;
     } catch (error) {
         console.error('Error fetching news:', error);
@@ -58,7 +59,8 @@ app.get('/', (req, res) => {
 
 app.get('/news', async (req, res) => {
     try {
-        await getNews();
+        const category = req.query.category;
+        await getNews(category);
         res.json(news);
     } catch (error) {
         res.status(500).json({ error: error.message });

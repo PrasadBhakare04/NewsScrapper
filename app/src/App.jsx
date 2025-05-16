@@ -1,16 +1,9 @@
-<<<<<<< HEAD
 import { Routes, Route, NavLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import './App.css';
 import { io } from 'socket.io-client';
 import { v4 as uuid } from 'uuid';
 import { motion } from 'framer-motion';
-=======
-import { useEffect, useState, useRef } from 'react'
-import './App.css';
-import {io} from 'socket.io-client'
-import NewsContainer from './components/NewsContainer';
->>>>>>> 4f6186de376bb82c4d3dc40c0137d77f0ab45a7f
 
 // Pages
 function Home() {
@@ -23,7 +16,6 @@ function Home() {
     socket.on('getNews', (news) => {
       setNews(news);
       setLoading(false);
-<<<<<<< HEAD
     });
     socket.on('error', (error) => {
       setError(error);
@@ -101,23 +93,6 @@ function Home() {
       )}
     </motion.div>
   );
-=======
-    })
-    return () => {
-      socket.disconnect()
-    }
-  }, [])
-
-  return <>
-  {
-    loading ? <div style={{background : "transparent"}}><img src = {"Loading.svg"}/></div> : null
-  }
-  <NewsContainer news={news} Genre={"Politics !!!"}/>
-  <NewsContainer news={news} Genre={"Technology !!!"}/>
-  <NewsContainer news={news} Genre={"Entertainment !!!"}/>
-
-  </>
->>>>>>> 4f6186de376bb82c4d3dc40c0137d77f0ab45a7f
 }
 
 function Profile() {

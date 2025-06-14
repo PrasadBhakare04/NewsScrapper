@@ -28,8 +28,23 @@ export default function GlobalWeather() {
       }
 
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
         const url = `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${city.name}`;
-        const res = await fetch(url);
+        const res = await fetch(url, {
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        clearTimeout(timeoutId);
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
         const data = await res.json();
         setLastFetchTime(Date.now());
 
@@ -39,6 +54,10 @@ export default function GlobalWeather() {
 
         return data;
       } catch (err) {
+        if (err.name === 'AbortError') {
+          console.error(`Request timeout for ${city.name}`);
+          throw new Error('Request timed out. Please try again.');
+        }
         console.error(`Failed to fetch weather for ${city.name}:`, err);
         throw err;
       }
